@@ -19,7 +19,7 @@ app.use(apiLimiter);
 app.use(cors({
   origin: [
     process.env.CLIENT_URL || 'http://localhost:8080',
-    'https://learnhub-okj4d5qth-velizhasks-projects.vercel.app',
+    'https://learnhub-sable-three.vercel.app',
     /\.vercel\.app$/
   ],
   credentials: true
