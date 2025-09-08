@@ -41,7 +41,7 @@ export const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="p-2 bg-gradient-hero rounded-lg shadow-glow group-hover:shadow-lg transition-all">
+            <div className="p-2 bg-white rounded-lg border border-primary/20 shadow-sm group-hover:shadow-md group-hover:border-primary/40 transition-all">
               <img src="/learnhub-logo.png" alt="LearnHub" className="w-8 h-8" />
             </div>
             <div className="hidden sm:block">
