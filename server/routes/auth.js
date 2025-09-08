@@ -30,27 +30,40 @@ router.get('/google/callback',
 // Regular auth routes
 router.post('/register', async (req, res) => {
   try {
+    console.log('Register request received:', req.body);
     const { name, email, password } = req.body;
     
+    if (!name || !email || !password) {
+      console.log('Missing required fields:', { name: !!name, email: !!email, password: !!password });
+      return res.status(400).json({ message: 'Name, email, and password are required' });
+    }
+    
+    console.log('Checking for existing user with email:', email);
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      console.log('User already exists with email:', email);
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+    
+    console.log('Checking for existing username:', name);
+    const existingUsername = await User.findOne({ name });
+    if (existingUsername) {
+      console.log('Username already exists:', name);
+      return res.status(400).json({ message: 'Username already exists' });
     }
 
+    console.log('Creating new user...');
     const user = await User.create({ name, email, password });
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    console.log('User created successfully:', user._id);
 
     res.status(201).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        profileImage: user.profileImage
-      }
+      message: 'Account created successfully! Please login to continue.',
+      success: true
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Registration error:', error.message);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
@@ -119,6 +132,28 @@ router.patch('/profile', auth, async (req, res) => {
     ).select('-password');
 
     res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/profile/image', auth, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { profileImage: '' },
+      { new: true }
+    ).select('-password');
+
+    res.json({
+      message: 'Profile image deleted successfully',
       user: {
         id: user._id,
         name: user.name,

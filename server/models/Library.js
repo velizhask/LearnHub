@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const librarySchema = new mongoose.Schema({
   userId: {
@@ -28,4 +28,4 @@ const librarySchema = new mongoose.Schema({
 
 librarySchema.index({ userId: 1, bookId: 1 }, { unique: true });
 
-export default mongoose.model('Library', librarySchema);
+module.exports = mongoose.model('Library', librarySchema);
