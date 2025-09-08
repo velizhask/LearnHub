@@ -61,7 +61,7 @@ cp server/.env.example server/.env
 
 **Configure `server/.env`:**
 ```env
-PORT=5003
+PORT=5000
 MONGO_URI=mongodb://localhost:27017/learnhub
 JWT_SECRET=your-super-secret-jwt-key
 CLIENT_URL=http://localhost:8080
@@ -70,7 +70,7 @@ CLIENT_URL=http://localhost:8080
 GOOGLE_BOOKS_API_KEY=your-api-key
 GOOGLE_CLIENT_ID=your-client-id
 GOOGLE_CLIENT_SECRET=your-client-secret
-GOOGLE_CALLBACK_URL=http://localhost:5003/api/auth/google/callback
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
 
 # Email Configuration
 EMAIL_USER=your-gmail@gmail.com
@@ -89,7 +89,7 @@ cd client && npm run dev
 
 **Access Application:**
 - Frontend: http://localhost:8080
-- Backend API: http://localhost:5003/api
+- Backend API: http://localhost:5000/api
 
 ## 🔧 API Configuration
 
@@ -100,8 +100,8 @@ cd client && npm run dev
 
 ### Google OAuth Setup
 1. In Credentials → Create OAuth 2.0 Client ID
-2. Authorized origins: `http://localhost:5003`
-3. Redirect URIs: `http://localhost:5003/api/auth/google/callback`
+2. Authorized origins: `http://localhost:5000`
+3. Redirect URIs: `http://localhost:5000/api/auth/google/callback`
 
 ### Gmail Configuration
 1. Enable 2FA on Gmail
@@ -126,15 +126,15 @@ cd client && npm run dev
 ### Sample Requests
 ```bash
 # Search books
-curl "http://localhost:5003/api/books/search?q=javascript&maxResults=5"
+curl "http://localhost:5000/api/books/search?q=javascript&maxResults=5"
 
 # Register user
-curl -X POST http://localhost:5003/api/auth/register \
+curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Demo User","email":"demo@example.com","password":"demo123"}'
 
 # Add book to library (with auth token)
-curl -X POST http://localhost:5003/api/library/add \
+curl -X POST http://localhost:5000/api/library/add \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"bookId":"abc123","title":"Learning React","authors":["Alex Banks"]}'

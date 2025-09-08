@@ -106,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async () => {
     try {
-      window.location.href = `http://localhost:5003/api/auth/google`;
+      window.location.href = `http://localhost:5000/api/auth/google`;
     } catch (error: any) {
       console.error('Google login error:', error);
       throw error;
