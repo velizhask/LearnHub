@@ -54,14 +54,14 @@ export const Appearance = () => {
                 const Icon = option.icon;
                 return (
                   <Button
-                    key={option.value}
-                    variant={theme === option.value ? "default" : "outline"}
-                    onClick={() => setTheme(option.value)}
-                    className="flex flex-col gap-2 h-auto py-4"
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-sm">{option.label}</span>
-                  </Button>
+  key={option.value}
+  variant={theme === option.value ? "default" : "outline"}
+  onClick={() => setTheme(option.value as "light" | "dark" | "system")}
+  className="flex flex-col gap-2 h-auto py-4"
+>
+  <Icon className="w-5 h-5" />
+  <span className="text-sm">{option.label}</span>
+</Button>
                 );
               })}
             </div>
@@ -72,14 +72,14 @@ export const Appearance = () => {
             <div className="grid grid-cols-4 gap-2 mt-2">
               {colorOptions.map((option) => (
                 <Button
-                  key={option.value}
-                  variant={colorScheme === option.value ? "default" : "outline"}
-                  onClick={() => setColorScheme(option.value)}
-                  className="flex flex-col gap-2 h-auto py-4"
-                >
-                  <div className={`w-6 h-6 rounded-full ${option.color}`} />
-                  <span className="text-sm">{option.label}</span>
-                </Button>
+  key={option.value}
+  variant={colorScheme === option.value ? "default" : "outline"}
+  onClick={() => setColorScheme(option.value as "blue" | "green" | "purple" | "orange")}
+  className="flex flex-col gap-2 h-auto py-4"
+>
+  <div className={`w-6 h-6 rounded-full ${option.color}`} />
+  <span className="text-sm">{option.label}</span>
+</Button>
               ))}
             </div>
           </div>

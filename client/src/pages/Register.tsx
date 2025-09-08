@@ -24,7 +24,7 @@ const Register = () => {
       const response = await register(email, password, name);
       toast({
         title: "Account Created Successfully!",
-        description: response.message || "Please login to continue.",
+        description: "Please login to continue.",
       });
       navigate('/login');
     } catch (error: any) {
