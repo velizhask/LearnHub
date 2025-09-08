@@ -106,9 +106,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = async () => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5003/api';
-      const baseUrl = API_BASE_URL.replace('/api', '');
-      window.location.href = `${baseUrl}/api/auth/google`;
+      // Use production URL in production, localhost in development
+      const isProduction = window.location.hostname !== 'localhost';
+      const backendUrl = isProduction 
+        ? 'https://learnhub-pro.up.railway.app'
+        : 'http://localhost:5003';
+      
+      window.location.href = `${backendUrl}/api/auth/google`;
     } catch (error: any) {
       console.error('Google login error:', error);
       throw error;
