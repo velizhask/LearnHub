@@ -107,8 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     try {
       // Use production URL in production, localhost in development
-      const isProduction = window.location.hostname !== 'localhost';
-      const backendUrl = isProduction 
+      const backendUrl = import.meta.env.PROD 
         ? 'https://learnhub-pro.up.railway.app'
         : 'http://localhost:5003';
       
