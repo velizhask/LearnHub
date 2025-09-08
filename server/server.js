@@ -17,7 +17,11 @@ app.use(apiLimiter);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:8080',
+  origin: [
+    process.env.CLIENT_URL || 'http://localhost:8080',
+    'https://learnhub-okj4d5qth-velizhasks-projects.vercel.app',
+    /\.vercel\.app$/
+  ],
   credentials: true
 }));
 app.use(express.json());
