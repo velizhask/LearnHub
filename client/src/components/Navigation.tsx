@@ -42,7 +42,7 @@ export const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="p-2 bg-gradient-hero rounded-lg shadow-glow group-hover:shadow-lg transition-all">
-              <BookOpen className="w-6 h-6 text-primary-foreground" />
+              <img src="/learnhub-logo.png" alt="LearnHub" className="w-8 h-8" />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold bg-gradient-hero bg-clip-text text-transparent">
