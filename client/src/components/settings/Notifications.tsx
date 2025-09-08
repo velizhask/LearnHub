@@ -4,12 +4,14 @@ import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Bell, Mail, Smartphone } from "lucide-react";
+import { Bell, Mail, Smartphone, Send } from "lucide-react";
 import { notificationsAPI } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../ui/use-toast";
 
 export const Notifications = () => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [readingReminders, setReadingReminders] = useState(true);
@@ -21,7 +23,11 @@ export const Notifications = () => {
 
   const handleSave = async () => {
     if (!user?.email) {
-      alert("Please login to save notification settings.");
+      toast({
+        title: "Login Required",
+        description: "Please login to save notification settings.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -33,18 +39,52 @@ export const Notifications = () => {
         readingReminders
       });
       
-      // Send test email if email notifications are enabled
-      if (emailNotifications) {
-        await notificationsAPI.sendEmail({
-          to: user.email,
-          subject: "LearnHub Notifications Enabled",
-          message: "You have successfully enabled email notifications for your reading reminders and goals."
-        });
-      }
-      
-      alert("Notification settings saved successfully!");
+      toast({
+        title: "Settings Saved",
+        description: "Notification settings saved successfully!",
+      });
     } catch (error) {
-      alert("Failed to save notification settings. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to save notification settings. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTestEmail = async () => {
+    if (!user?.email) {
+      toast({
+        title: "Login Required",
+        description: "Please login to test email notifications.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await notificationsAPI.sendEmail({
+        to: user.email,
+        subject: "LearnHub Test Notification",
+        message: "This is a test email to verify that your email notifications are working correctly. If you received this email, your notifications are set up properly!"
+      });
+      
+      toast({
+        title: "Test Email Sent",
+        description: `Test email sent to ${user.email}. Please check your inbox.`,
+      });
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to send test email';
+      const setupInfo = error.response?.data?.setup;
+      
+      toast({
+        title: "Email Failed",
+        description: setupInfo ? `${errorMessage}\n\nSetup: ${setupInfo}` : errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -163,9 +203,20 @@ export const Notifications = () => {
         </CardContent>
       </Card>
 
-      <Button onClick={handleSave} className="w-full" disabled={isLoading}>
-        {isLoading ? 'Saving...' : 'Save Notification Settings'}
-      </Button>
+      <div className="flex gap-3">
+        <Button onClick={handleSave} className="flex-1" disabled={isLoading}>
+          {isLoading ? 'Saving...' : 'Save Settings'}
+        </Button>
+        <Button 
+          onClick={handleTestEmail} 
+          variant="outline" 
+          disabled={isLoading || !emailNotifications}
+          className="flex items-center gap-2"
+        >
+          <Send className="w-4 h-4" />
+          Test Email
+        </Button>
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Separator } from "../components/ui/separator";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Book, ReadingStatus } from "../components/BookCard";
+import { useLibrary } from "../contexts/LibraryContext";
 import { PersonalInfo } from "../components/settings/PersonalInfo";
 import { Notifications } from "../components/settings/Notifications";
 import { ReadingGoals } from "../components/settings/ReadingGoals";
@@ -30,7 +31,7 @@ interface LibraryBook extends Book {
 
 export default function Profile() {
   const { user } = useAuth();
-  const [library] = useLocalStorage<LibraryBook[]>("learnhub-library", []);
+  const { library } = useLibrary();
   const [activeSection, setActiveSection] = useState("overview");
   const [yearlyGoal] = useLocalStorage("yearlyGoal", "24");
   
@@ -59,7 +60,13 @@ export default function Profile() {
   // Mock recent activity
   const recentBooks = library
     .filter(book => book.readingStatus === "completed")
-    .slice(0, 3);
+    .slice(0, 3)
+    .map(book => ({
+      id: book.bookId,
+      title: book.title,
+      authors: book.authors,
+      imageLinks: { thumbnail: book.thumbnail }
+    }));
 
   const achievements = [
     { title: "First Book", description: "Completed your first book", earned: completedBooks >= 1 },

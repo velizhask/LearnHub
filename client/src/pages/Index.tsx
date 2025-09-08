@@ -3,9 +3,9 @@ import { BookCard, Book, ReadingStatus } from "../components/BookCard";
 import { SearchBar } from "../components/SearchBar";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { searchBooks, getFeaturedBooks } from "../services/googleBooksApi";
 import { useToast } from "../hooks/use-toast";
+import { useLibrary } from "../contexts/LibraryContext";
 import { 
   BookOpen, 
   Sparkles, 
@@ -26,8 +26,8 @@ const Index = () => {
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [library, setLibrary] = useLocalStorage<LibraryBook[]>("learnhub-library", []);
   const { toast } = useToast();
+  const { library, addToLibrary, removeFromLibrary, updateReadingStatus, isInLibrary } = useLibrary();
 
   // Load featured books on component mount
   useEffect(() => {
@@ -73,54 +73,25 @@ const Index = () => {
   };
 
   const handleSaveToLibrary = async (book: Book) => {
-    console.log('handleSaveToLibrary called with:', book.title);
-    const isAlreadyInLibrary = library.some(libBook => libBook.id === book.id);
-    console.log('isAlreadyInLibrary:', isAlreadyInLibrary);
-    console.log('current library:', library);
+    const bookInLibrary = isInLibrary(book.id);
     
-    try {
-      if (isAlreadyInLibrary) {
-        // Remove from library
-        setLibrary(prevLibrary => {
-          const newLibrary = prevLibrary.filter(libBook => libBook.id !== book.id);
-          console.log('Removing from library, new library:', newLibrary);
-          return newLibrary;
-        });
-        alert(`"${book.title}" removed from library`);
-      } else {
-        // Add to library
-        const newLibraryBook: LibraryBook = {
-          ...book,
-          readingStatus: "not-started",
-          addedDate: new Date().toISOString(),
-        };
-        setLibrary(prevLibrary => {
-          const newLibrary = [...prevLibrary, newLibraryBook];
-          console.log('Adding to library, new library:', newLibrary);
-          return newLibrary;
-        });
-        alert(`"${book.title}" added to library`);
-      }
-    } catch (error) {
-      console.error('Error saving to library:', error);
-      alert('Failed to update library. Please try again.');
+    if (bookInLibrary) {
+      await removeFromLibrary(book.id);
+    } else {
+      await addToLibrary(book);
     }
   };
 
-  const handleStatusChange = (bookId: string, status: ReadingStatus) => {
-    setLibrary(prevLibrary =>
-      prevLibrary.map(book =>
-        book.id === bookId ? { ...book, readingStatus: status } : book
-      )
-    );
+  const handleStatusChange = async (bookId: string, status: ReadingStatus) => {
+    await updateReadingStatus(bookId, status);
   };
 
   const isBookInLibrary = (bookId: string) => {
-    return library.some(book => book.id === bookId);
+    return isInLibrary(bookId);
   };
 
   const getBookStatus = (bookId: string): ReadingStatus => {
-    const book = library.find(book => book.id === bookId);
+    const book = library.find(book => book.bookId === bookId);
     return book?.readingStatus || "not-started";
   };
 

@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LibraryProvider } from "./contexts/LibraryContext";
 import { Navigation } from "./components/Navigation";
 import Index from "./pages/Index";
 import Library from "./pages/Library";
@@ -10,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AuthSuccess from "./pages/AuthSuccess";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "./components/ui/toaster";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +19,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
+        <LibraryProvider>
+          <BrowserRouter>
           <Navigation />
           <Routes>
             <Route path="/" element={<Index />} />
@@ -29,7 +32,9 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+          <Toaster />
+          </BrowserRouter>
+        </LibraryProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>

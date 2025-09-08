@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { BookOpen, Bookmark, BookmarkCheck, Star } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../hooks/use-toast";
 
@@ -65,6 +65,11 @@ export const BookCard = ({
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Sync status with props
+  useEffect(() => {
+    setCurrentStatus(readingStatus);
+  }, [readingStatus]);
+
   const handleStatusClick = () => {
     const statusOrder: ReadingStatus[] = ["not-started", "reading", "completed"];
     const currentIndex = statusOrder.indexOf(currentStatus);
@@ -75,7 +80,11 @@ export const BookCard = ({
 
   const handleSaveToLibrary = () => {
     if (!user) {
-      alert('Please login to save books to your library.');
+      toast({
+        title: "Login Required",
+        description: "Please login to save books to your library.",
+        variant: "destructive",
+      });
       return;
     }
     console.log('Saving book:', book.title, 'isInLibrary:', isInLibrary);
@@ -345,7 +354,11 @@ export const BookCard = ({
                   if (book.previewLink) {
                     window.open(book.previewLink, '_blank');
                   } else {
-                    alert('Premium Feature: This book requires a premium subscription to read!');
+                    toast({
+                      title: "Premium Feature",
+                      description: "This book requires a premium subscription to read!",
+                      variant: "destructive",
+                    });
                   }
                 }}
               >

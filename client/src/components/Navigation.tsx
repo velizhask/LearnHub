@@ -4,18 +4,25 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { BookOpen, Home, Library, User, Menu, X, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { LogoutDialog } from "./ui/logout-dialog";
 
 const cn = (...classes: string[]) => classes.filter(Boolean).join(' ');
 
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
+    setShowLogoutDialog(true);
+  };
+
+  const confirmLogout = () => {
+    logout(false); // Skip browser confirm since we have custom dialog
     navigate('/');
+    setShowLogoutDialog(false);
   };
 
   const navItems = [
@@ -136,6 +143,12 @@ export const Navigation = () => {
           </div>
         )}
       </div>
+      
+      <LogoutDialog 
+        open={showLogoutDialog}
+        onOpenChange={setShowLogoutDialog}
+        onConfirm={confirmLogout}
+      />
     </nav>
   );
 };

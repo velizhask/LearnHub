@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Camera, Save } from "lucide-react";
+import { Camera, Save, Trash2 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../ui/use-toast";
 
 export const PersonalInfo = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, deleteProfileImage } = useAuth();
+  const { toast } = useToast();
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -17,27 +19,109 @@ export const PersonalInfo = () => {
   const [profileImage, setProfileImage] = useState(user?.profileImage || "");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Sync profile image with user state
+  useEffect(() => {
+    setProfileImage(user?.profileImage || "");
+  }, [user?.profileImage]);
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => setProfileImage(e.target?.result as string);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Set canvas size to square (200x200)
+          const size = 200;
+          canvas.width = size;
+          canvas.height = size;
+          
+          // Calculate crop dimensions to maintain aspect ratio
+          const minDim = Math.min(img.width, img.height);
+          const cropX = (img.width - minDim) / 2;
+          const cropY = (img.height - minDim) / 2;
+          
+          // Draw cropped and resized image
+          ctx?.drawImage(img, cropX, cropY, minDim, minDim, 0, 0, size, size);
+          
+          // Convert to base64
+          const resizedImage = canvas.toDataURL('image/jpeg', 0.8);
+          setProfileImage(resizedImage);
+          
+          // Auto-save the new profile image
+          handleSaveImage(resizedImage);
+        };
+        img.src = e.target?.result as string;
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSave = async () => {
     if (newPassword && newPassword !== confirmPassword) {
-      alert("Passwords don't match!");
+      toast({
+        title: "Error",
+        description: "Passwords don't match!",
+        variant: "destructive",
+      });
       return;
     }
 
     setIsLoading(true);
     try {
-      await updateProfile(name, profileImage);
-      alert("Profile updated successfully!");
+      // Only update name, profile image is handled separately
+      await updateProfile(name, user?.profileImage);
+      toast({
+        title: "Success",
+        description: "Profile information updated successfully!",
+      });
     } catch (error) {
-      alert("Failed to update profile. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveImage = async (imageData: string) => {
+    setIsLoading(true);
+    try {
+      await updateProfile(name, imageData);
+      toast({
+        title: "Success",
+        description: "Profile image updated successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    setIsLoading(true);
+    try {
+      await deleteProfileImage();
+      toast({
+        title: "Success",
+        description: "Profile image deleted successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete profile image. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +140,7 @@ export const PersonalInfo = () => {
               {name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div>
+          <div className="flex gap-2">
             <input
               type="file"
               accept="image/*"
@@ -70,6 +154,17 @@ export const PersonalInfo = () => {
                 Change Photo
               </label>
             </Button>
+            {(profileImage || user?.profileImage) && (
+              <Button 
+                variant="outline" 
+                onClick={handleDeleteImage}
+                disabled={isLoading}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
