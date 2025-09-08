@@ -40,36 +40,6 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/learnhub')
     console.error('Full error:', err);
   });
 
-// Test route to check database connection
-app.get('/api/test-db', async (req, res) => {
-  try {
-    const User = require('./models/User');
-    const testUser = new User({
-      name: 'Test User',
-      email: 'test@example.com',
-      password: 'testpassword'
-    });
-    await testUser.save();
-    console.log('Test user created successfully');
-    
-    // Get database info
-    const dbName = mongoose.connection.db.databaseName;
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const userCount = await User.countDocuments();
-    
-    res.json({ 
-      message: 'Database test successful', 
-      userId: testUser._id,
-      database: dbName,
-      collections: collections.map(c => c.name),
-      userCount: userCount
-    });
-  } catch (error) {
-    console.error('Database test failed:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/books', require('./routes/books'));
@@ -97,5 +67,5 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-const PORT = process.env.PORT || 5003;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
