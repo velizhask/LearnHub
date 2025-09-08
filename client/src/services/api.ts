@@ -69,6 +69,8 @@ export const authAPI = {
   
   updateProfile: (profileData: { name: string; profileImage?: string }) =>
     api.patch('/auth/profile', profileData),
+  
+  deleteProfileImage: () => api.delete('/auth/profile/image'),
 };
 
 // Books API
@@ -98,8 +100,8 @@ export const libraryAPI = {
   
   removeBook: (bookId: string) => api.delete(`/library/${bookId}`),
   
-  updateBookStatus: (bookId: string, status: string) =>
-    api.patch(`/library/${bookId}/status`, { status }),
+  updateBookStatus: (bookId: string, readingStatus: string) =>
+    api.patch(`/library/${bookId}/status`, { readingStatus }),
 };
 
 // Notifications API

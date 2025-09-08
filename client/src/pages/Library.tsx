@@ -1,29 +1,20 @@
-import { useState, useEffect } from "react";
-import { BookCard, Book, ReadingStatus } from "../components/BookCard";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useState } from "react";
+import { BookCard, ReadingStatus } from "../components/BookCard";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { BookOpen, Filter } from "lucide-react";
-
-interface LibraryBook extends Book {
-  readingStatus: ReadingStatus;
-  addedDate: string;
-}
+import { BookOpen, Loader2 } from "lucide-react";
+import { useLibrary } from "../contexts/LibraryContext";
 
 export default function Library() {
-  const [library, setLibrary] = useLocalStorage<LibraryBook[]>("learnhub-library", []);
+  const { library, removeFromLibrary, updateReadingStatus, isLoading } = useLibrary();
   const [filter, setFilter] = useState<ReadingStatus | "all">("all");
 
-  const handleStatusChange = (bookId: string, status: ReadingStatus) => {
-    setLibrary(prevLibrary =>
-      prevLibrary.map(book =>
-        book.id === bookId ? { ...book, readingStatus: status } : book
-      )
-    );
+  const handleStatusChange = async (bookId: string, status: ReadingStatus) => {
+    await updateReadingStatus(bookId, status);
   };
 
-  const handleRemoveFromLibrary = (bookId: string) => {
-    setLibrary(prevLibrary => prevLibrary.filter(book => book.id !== bookId));
+  const handleRemoveFromLibrary = async (bookId: string) => {
+    await removeFromLibrary(bookId);
   };
 
   const filteredBooks = library.filter(book => 
@@ -79,18 +70,32 @@ export default function Library() {
         </div>
 
         {/* Books Grid */}
-        {filteredBooks.length > 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ml-3 text-muted-foreground">Loading your library...</span>
+          </div>
+        ) : filteredBooks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {filteredBooks.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                readingStatus={book.readingStatus}
-                onStatusChange={handleStatusChange}
-                onSaveToLibrary={() => handleRemoveFromLibrary(book.id)}
-                isInLibrary={true}
-              />
-            ))}
+            {filteredBooks.map((book) => {
+              const bookData = {
+                id: book.bookId,
+                title: book.title,
+                authors: book.authors,
+                description: book.description,
+                imageLinks: { thumbnail: book.thumbnail }
+              };
+              return (
+                <BookCard
+                  key={book.bookId}
+                  book={bookData}
+                  readingStatus={book.readingStatus}
+                  onStatusChange={(bookId, status) => handleStatusChange(bookId, status)}
+                  onSaveToLibrary={() => handleRemoveFromLibrary(book.bookId)}
+                  isInLibrary={true}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-16">

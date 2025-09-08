@@ -14,7 +14,8 @@ interface AuthContextType {
   register: (email: string, password: string, name: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   updateProfile: (name: string, profileImage?: string) => Promise<void>;
-  logout: () => void;
+  deleteProfileImage: () => Promise<void>;
+  logout: (showConfirm?: boolean) => void;
   isLoading: boolean;
 }
 
@@ -93,10 +94,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       const response = await authAPI.register({ email, password, name });
-      const { token, user } = response.data;
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('lastUserId', user.id);
-      setUser(user);
+      // Registration successful but no auto-login
+      return response.data;
     } catch (error: any) {
       console.error('Register API error:', error);
       throw error;
@@ -124,13 +123,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const deleteProfileImage = async () => {
+    try {
+      const response = await authAPI.deleteProfileImage();
+      setUser(response.data.user);
+    } catch (error: any) {
+      console.error('Delete profile image error:', error);
+      throw error;
+    }
+  };
+
+  const logout = (showConfirm = true) => {
+    if (showConfirm && !confirm('Are you sure you want to logout?')) {
+      return;
+    }
     localStorage.removeItem('authToken');
+    localStorage.removeItem('lastUserId');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, loginWithGoogle, updateProfile, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, loginWithGoogle, updateProfile, deleteProfileImage, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

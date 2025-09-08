@@ -21,17 +21,17 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await register(email, password, name);
+      const response = await register(email, password, name);
       toast({
-        title: "Welcome to LearnHub!",
-        description: "Your account has been created successfully.",
+        title: "Account Created Successfully!",
+        description: response.message || "Please login to continue.",
       });
-      navigate('/');
+      navigate('/login');
     } catch (error: any) {
       console.error('Registration error:', error);
       const errorMessage = error.response?.data?.message || error.message || "Registration failed";
       toast({
-        title: "Registration failed",
+        title: "Registration Failed",
         description: errorMessage,
         variant: "destructive",
       });
