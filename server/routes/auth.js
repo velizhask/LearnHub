@@ -45,12 +45,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already exists' });
     }
     
-    console.log('Checking for existing username:', name);
-    const existingUsername = await User.findOne({ name });
-    if (existingUsername) {
-      console.log('Username already exists:', name);
-      return res.status(400).json({ message: 'Username already exists' });
-    }
+    // Remove username uniqueness check - allow duplicate names
 
     console.log('Creating new user...');
     const user = await User.create({ name, email, password });
