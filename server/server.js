@@ -8,6 +8,10 @@ require('dotenv').config();
 
 const app = express();
 
+app.get("/", (req, res) => {
+  res.send("✅ LearnHub API is running on Railway!");
+});
+
 // Apply rate limiting to all requests
 app.use(apiLimiter);
 
