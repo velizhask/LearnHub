@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Use production URL by default, fallback to localhost in development
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://learnhub-pro.up.railway.app/api'
+  ? 'https://learnhub-production-9484.up.railway.app'
   : 'http://localhost:5003/api';
 
 const api = axios.create({
