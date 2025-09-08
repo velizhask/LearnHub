@@ -1,53 +1,44 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-const passport = require('passport');
+const cors = require('cors');
 const session = require('express-session');
+const passport = require('passport');
+const { apiLimiter } = require('./middleware/rateLimiter');
 require('dotenv').config();
-
-// Import routes
-const authRoutes = require('./routes/auth');
-
-// Import passport config
-require('./config/passport')(passport);
 
 const app = express();
 
+// Apply rate limiting to all requests
+app.use(apiLimiter);
+
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: process.env.CLIENT_URL || 'http://localhost:8080',
   credentials: true
 }));
 app.use(express.json());
 app.use(session({
-  secret: process.env.JWT_SECRET,
+  secret: process.env.JWT_SECRET || 'fallback-secret',
   resave: false,
   saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
+// Passport config
+require('./config/passport')(passport);
+
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/learnhub')
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch(err => console.log(err));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/books', require('./routes/books'));
+app.use('/api/library', require('./routes/library'));
+app.use('/api/goals', require('./routes/goals'));
+app.use('/api/notifications', require('./routes/notifications'));
 
-// Google Books API proxy
-app.get('/api/books/search', async (req, res) => {
-  try {
-    const { q } = req.query;
-    const axios = require('axios');
-    const response = await axios.get(`${process.env.GOOGLE_BOOKS_API}?q=${q}&key=${process.env.GOOGLE_BOOKS_API_KEY}`);
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching books' });
-  }
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5003;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
