@@ -1,68 +1,164 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 220 15% 97%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 215 85% 35%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 25 95% 95%;
+    --secondary-foreground: 25 85% 25%;
+
+    --muted: 220 15% 94%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 25 85% 55%;
+    --accent-foreground: 0 0% 98%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Custom design tokens for LearnHub */
+    --primary-glow: 215 85% 45%;
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 15% 98%));
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.2);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    --background: 215 30% 8%;
+    --foreground: 220 15% 95%;
+
+    --card: 215 25% 12%;
+    --card-foreground: 220 15% 95%;
+
+    --popover: 215 25% 12%;
+    --popover-foreground: 220 15% 95%;
+
+    --primary: 215 85% 55%;
+    --primary-foreground: 215 30% 8%;
+
+    --secondary: 25 20% 20%;
+    --secondary-foreground: 25 85% 85%;
+
+    --muted: 215 25% 15%;
+    --muted-foreground: 215 15% 65%;
+
+    --accent: 25 85% 65%;
+    --accent-foreground: 215 30% 8%;
+
+    --success: 142 76% 46%;
+    --success-foreground: 215 30% 8%;
+
+    --warning: 45 93% 57%;
+    --warning-foreground: 215 30% 8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Dark mode custom tokens */
+    --primary-glow: 215 85% 65%;
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(215 25% 14%));
+    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  button {
-    background-color: #f9f9f9;
+
+  /* Color scheme variations */
+  [data-color-scheme="green"] {
+    --primary: 142 76% 36%;
+    --primary-glow: 142 76% 46%;
+  }
+
+  [data-color-scheme="purple"] {
+    --primary: 262 83% 58%;
+    --primary-glow: 262 83% 68%;
+  }
+
+  [data-color-scheme="orange"] {
+    --primary: 25 95% 53%;
+    --primary-glow: 25 95% 63%;
+  }
+
+  /* Compact mode */
+  .compact {
+    --spacing-unit: 0.75;
+  }
+
+  .compact .p-4 {
+    padding: calc(1rem * var(--spacing-unit));
+  }
+
+  .compact .p-6 {
+    padding: calc(1.5rem * var(--spacing-unit));
+  }
+
+  .compact .gap-4 {
+    gap: calc(1rem * var(--spacing-unit));
+  }
+
+  /* No animations */
+  .no-animations * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
