@@ -1,8 +1,12 @@
 # LearnHub - Personalized Learning Resource Tracker
 
-A comprehensive web application that integrates with external APIs to create a personalized learning experience. Users can search for educational books, save content to their library, and track reading progress.
+A full-stack web application that integrates with Google Books API to help students discover, save, and track their learning progress through educational books.
+> 📌 This project was built as part of the **Elice APAC Full-Stack Engineer Challenge**. 
 
-![LearnHub Demo](https://via.placeholder.com/800x400/667eea/ffffff?text=LearnHub+Dashboard)
+## 🚀 Demo
+- 🌐 [Live Demo](https://learnhub-sable-three.vercel.app/)
+- 📂 [Repository](https://github.com/velizhask/LearnHub)
+- 🎥 [Demo Video](https://drive.google.com/file/d/1nQa2xIDpD7ly2cvTcow4KVicVx4Tim7R/view?usp=sharing)
 
 ## 🚀 Features
 
@@ -123,23 +127,6 @@ cd client && npm run dev
 | `POST` | `/api/library/add` | Add book | ✅ |
 | `PATCH` | `/api/library/:id/status` | Update status | ✅ |
 
-### Sample Requests
-```bash
-# Search books
-curl "http://localhost:5000/api/books/search?q=javascript&maxResults=5"
-
-# Register user
-curl -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Demo User","email":"demo@example.com","password":"demo123"}'
-
-# Add book to library (with auth token)
-curl -X POST http://localhost:5000/api/library/add \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"bookId":"abc123","title":"Learning React","authors":["Alex Banks"]}'
-```
-
 ## 🧪 Testing with Sample Data
 
 ### Demo User Account
@@ -204,18 +191,5 @@ cd server && NODE_ENV=production npm start
 - [🔍 Critical Analysis](docs/critical-analysis.md) - Strengths, limitations, improvements
 - [📊 Sample Data](docs/sample-data/) - Test data and API examples
 
-## 🤝 Contributing
-
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
 
 **Built with ❤️ for learners everywhere**
